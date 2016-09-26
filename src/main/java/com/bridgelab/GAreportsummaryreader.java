@@ -1,5 +1,4 @@
 package com.bridgelab;
-
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +7,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class GAreportsummary1reader {
-	public List[] GAreportsummary1() {
+public class GAreportsummaryreader {
+	public List[] GAreportsummary() {
 		JSONParser parser = new JSONParser();
 		ArrayList<String> dimentionarraylist = new ArrayList<String>();
 		ArrayList<String> metricarraylist = new ArrayList<String>();
@@ -18,46 +17,47 @@ public class GAreportsummary1reader {
 			Object obj = parser
 					.parse(new FileReader("/home/bridgeit/Desktop/springexp/HelloAnalytics/GAreportsummary1.JSON"));
 			// converting object into JSONObject
-			System.out.println("hello idia");
 			JSONObject jsonObject = (JSONObject) obj;
-
-			// converting into JSONObject
-			JSONArray GAReportInfoarray = (JSONArray) jsonObject.get("GAReportInfo");
+		
 			// reading GAReportInfoarray
+			JSONArray GAReportInfoarray = (JSONArray) jsonObject.get("GAReportInfo");
+			
 			for (int i = 0; i < GAReportInfoarray.size(); i++) {
 				JSONObject GAReportInfoobject = (JSONObject) GAReportInfoarray.get(i);
-				// converting GAID into string and printing same
+				// converting GAID into string and printing same 
 				String gaid = (String) GAReportInfoobject.get("GAID");
-				System.out.println("gaid=" + gaid);
-				// converting GAdiscription into string and printing same
+				System.out.println("gaid="+gaid);
+				// converting GAdiscription into string and printing same 
 				String GAdiscription = (String) GAReportInfoobject.get("GAdiscription");
-				System.out.println("GAdiscription=" + GAdiscription);
-
-				// making metric array
+				System.out.println("GAdiscription="+GAdiscription);
+				
+				//making metric array
 				JSONArray metricarray = (JSONArray) GAReportInfoobject.get("metric");
-
-				// reading the metric array
+				System.out.println("the metrics are ");
+				//reading the metric array
 				for (int k = 0; k < metricarray.size(); k++) {
-					// adding into metric ArrayList
+					System.out.println(metricarray.get(k));
 					metricarraylist.add((String) metricarray.get(k));
 				}
-
-				// making dimension JSONArray
+				
+				//making dimension jsonarray
 				JSONArray dimensionsarray = (JSONArray) GAReportInfoobject.get("dimension");
+				System.out.println("the dimension are ");
 
-				// reading the dimension array
+				// reading the dimention array 
 				for (int j = 0; j < dimensionsarray.size(); j++) {
+					System.out.println(dimensionsarray.get(j));
 					dimentionarraylist.add((String) dimensionsarray.get(j));
 				}
+				System.out.println("the dimensionfilter are ");
 
-				// making DimensionFilter into JSONArray
+				// making dimensionfilter into JSONArray
 				JSONArray dimensionfilterarray = (JSONArray) GAReportInfoobject.get("dimensionfilter");
-				// reading the DimensionFilter JSONArray
+				// reading the dimensionfilterarray 
 				for (int l = 0; l < dimensionfilterarray.size(); l++) {
-					// adding into DimensionFilter ArrayList
+					System.out.println(dimensionfilterarray.get(l));
 					dimensionfilterarraylist.add((String) dimensionfilterarray.get(l));
 				}
-
 			}
 
 		} catch (Exception e) {
@@ -65,4 +65,5 @@ public class GAreportsummary1reader {
 		}
 		return new List[] { metricarraylist, dimentionarraylist, dimensionfilterarraylist };
 	}
+	
 }

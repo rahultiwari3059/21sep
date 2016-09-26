@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.util.SystemPropertyUtils;
 
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
 
 public class Csvfilecreator {
 	static int i = 0, j = 0, k = 0;
+	IdandDiscReader id = new IdandDiscReader();
 
 	public void csvfilecreate(String response) {
 		int temp1 = 0, temp2 = 0, temp3 = 0;
@@ -41,7 +43,7 @@ public class Csvfilecreator {
 				JSONArray rowarray = (JSONArray) dataobject.get("rows");
 				// storing row JSONArray size into temp1
 				temp1 = rowarray.size();
-				//System.out.println(temp1);
+				// System.out.println(temp1);
 				// reading rows JSONArray
 				for (int i = 0; i < rowarray.size(); i++) {
 					// getting first object and converting into JSONObject
@@ -50,7 +52,7 @@ public class Csvfilecreator {
 					JSONArray metricarray = (JSONArray) rowobject.get("metrics");
 					// storing metric JSONArray size into temp2
 					temp2 = metricarray.size();
-					//System.out.println(temp2);
+					// System.out.println(temp2);
 					// iterating metric JSONArray
 					for (int k = 0; k < metricarray.size(); k++) {
 						// getting first object and converting into JSONObject
@@ -96,26 +98,42 @@ public class Csvfilecreator {
 	public void createCsv(ArrayList<String> list, ArrayList<String> list1, int temp1, int temp2, int temp3) {
 		int k = 0;
 		int p = 0;
+		int c = 0;
 		try {
+			System.out.println("hello");
+			ArrayList<String> s1 = id.gaid();
+
+			// initializing the boolean value
+			boolean b1 = false;
+
+			// creating the new csv file
+
+			File file1 = new File("/home/bridgeit/Music/CSVfile3.csv");
+			// checking whether file already existing or not
 
 			// if metric have 4 element
-			if (temp2 == 4) {
-				// initializing the boolean value
+			
+			
+			
+			//File file = new File("/home/bridgeit/Music/CSVfile4.csv");
+			/*if (temp2 == 4) {
 				boolean b = false;
-				// creating the new csv file
-				File file = new File("/home/bridgeit/Music/GAdiscription.csv");
-				// checking whether file already existing or not
+
 				if (!file.exists()) {
 					b = true;
 				}
-				
+
 				FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
 				BufferedWriter bw11 = new BufferedWriter(fw);
+
 				// if file doesn't exists, then create it and appending values
 				if (b) {
 					file.createNewFile();
-					// appending columnames
-
+					// appending column names
+					bw11.append("gaid");
+					bw11.append("^");
+					bw11.append("gadiscription");
+					bw11.append("^");
 					bw11.append("Androidid");
 					bw11.append("^");
 					bw11.append("Date");
@@ -128,101 +146,151 @@ public class Csvfilecreator {
 					bw11.append("^");
 					bw11.append("Exit");
 					bw11.append("^");
-					bw11.append("EventCategory");
-					bw11.append("^");
-					bw11.append("Totalevents");
-					bw11.append("^");
+
 					bw11.newLine();
 				}
 
 				for (i = 0; i < temp1; i++) {
-
+					bw11.append(s1.get(0));
+					bw11.append("^");
+					bw11.append(s1.get(1));
+					bw11.append("^");
+					// appending dimension output
 					for (j = 0; j < temp3; j++) {
-						k++;
+
 						System.out.println(list.get(k));
+
 						bw11.append(list.get(k));
+						k++;
 						bw11.append("^");
 					}
-
+					// appending metric value
 					for (int m = 0; m < temp2; m++) {
-						p++;
+
 						System.out.println(list1.get(p));
 						bw11.append(list1.get(p));
+						p++;
 						bw11.append("^");
 					}
-
-					bw11.append("null");
-					bw11.append("^");
-					bw11.append("null");
-					bw11.append("^");
+					
 					bw11.newLine();
+
 				}
+				bw11.close();
 			}
-			// if metric have 2 values
+
+			// if metric have 1 values
 			else {
-
-				// initializing the boolean value
-				boolean b = false;
-				// creating the new csv file
-				File file = new File("/home/bridgeit/Music/GAdiscription.csv");
-				// checking whether file already existing or not
-				if (!file.exists()) {
-					b = true;
-				}
-				System.out.println(file.getAbsoluteFile());
-				FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-				BufferedWriter bw11 = new BufferedWriter(fw);
-				// if file doesn't exists, then create it and appending values
-				if (b) {
-					file.createNewFile();
-					// appending columnames
-					bw11.append("AndoidId");
-					bw11.append("^");
-					bw11.append("EventCategory");
-					bw11.append("^");
-					bw11.append("Date");
-					bw11.append("^");
-					bw11.append("Totalevents");
-					bw11.append("^");
-					bw11.append("Sessions");
-					bw11.append("^");
-					bw11.append("Screenviews");
-					bw11.append("^");
-					bw11.append("ExitRate");
-					bw11.append("^");
-					bw11.append("Exit");
-					bw11.append("^");
-					bw11.newLine();
+*/
+				if (!file1.exists()) {
+					b1 = true;
 				}
 
-				for (i = 0; i < temp1; i++) {
+				FileWriter fw1 = new FileWriter(file1.getAbsoluteFile(), true);
+				BufferedWriter bw1 = new BufferedWriter(fw1);
 
-					for (j = 0; j < temp3; j++) {
-						k++;
-						System.out.println(list.get(k));
-						bw11.append(list.get(k));
-						bw11.append("^");
+				if (b1) {
+					file1.createNewFile();
+					// appending column names
+					bw1.append("gaid");
+					bw1.append("^");
+					bw1.append("gadiscription");
+					bw1.append("^");
+					bw1.append("Date");
+					bw1.append("^");
+					bw1.append("AndroisId");
+					bw1.append("^");
+					bw1.append("Eventcategory/connectiontype");
+					bw1.append("^");
+					bw1.append("Totalevents");
+					bw1.append("^");
+					bw1.append("Sessions");
+					bw1.append("^");
+					bw1.append("Screenviews");
+					bw1.append("^");
+					bw1.append("Exit");
+					bw1.append("^");
+					bw1.append("ExitRate");
+					bw1.append("^");
+					bw1.newLine();
+				}
+				// id dimension have 3 element
+				if (temp3 == 3) {
+					for (i = 0; i < temp1; i++) {
+						c++;
+						bw1.append(s1.get(0));
+						bw1.append("^");
+						bw1.append(s1.get(1));
+						bw1.append("^");
+						// appending dimension output
+						for (j = 0; j < temp3; j++) {
+
+							System.out.println(list.get(k));
+
+							bw1.append(list.get(k));
+							k++;
+							bw1.append("^");
+						}
+						// appending metric value
+						for (int m = 0; m < temp2; m++) {
+
+							System.out.println(list1.get(p));
+							bw1.append(list1.get(p));
+							p++;
+							bw1.append("^");
+						}
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.newLine();
+
 					}
-					for (int m = 0; m < temp2; m++) {
-						p++;
+				} 
+				// if dimension having 2 element 
+				else {
 
-						bw11.append(list1.get(p));
-						System.out.println(list1.get(p));
+					for (i = 0; i < temp1; i++) {
+
+						bw1.append(s1.get(0));
+						bw1.append("^");
+						bw1.append(s1.get(1));
+						bw1.append("^");
+						// appending dimension output
+						for (j = 0; j < temp3; j++) {
+
+							System.out.println(list.get(k));
+
+							bw1.append(list.get(k));
+							k++;
+							bw1.append("^");
+						}
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
+						// appending metric value
+						for (int m = 0; m < temp2; m++) {
+
+							System.out.println(list1.get(p));
+							bw1.append(list1.get(p));
+							p++;
+							bw1.append("^");
+						}
+						bw1.newLine();
+
 					}
-					bw11.append("^");
-					bw11.append("null");
-					bw11.append("^");
-					bw11.append("null");
-					bw11.append("^");
-					bw11.append("null");
-					bw11.append("^");
-					bw11.append("null");
-					bw11.append("^");
-					bw11.newLine();
 				}
 
-			}
+				bw1.close();
+			//}
+
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}

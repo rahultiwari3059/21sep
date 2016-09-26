@@ -65,7 +65,8 @@ public class InitializeAnalyticsReporting {
 		return new AnalyticsReporting.Builder(httpTransport, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
-	//reading dimension,metric and dimension filter
+
+	// reading dimension,metric and dimension filter
 	public void getlistofelement(List[] summary) {
 		summaryresponse = summary;
 		metric = (ArrayList) summaryresponse[0];
@@ -110,7 +111,7 @@ public class InitializeAnalyticsReporting {
 			// adding dimension after setting name into the dimension ArrayList
 			dimensList.add(dimens.setName((String) dimension.get(i)));
 		}
-		
+
 		dimensionfilter1 = ga.getDimensionfilter1();
 		// creating object of DimensionFilter arrayList
 		ArrayList<DimensionFilter> dimensfilterList = new ArrayList<DimensionFilter>();
@@ -131,27 +132,33 @@ public class InitializeAnalyticsReporting {
 				dimensfilterList.add(dimensionFilter.setDimensionName(words[0]).setOperator("EXACT")
 						.setExpressions(Arrays.asList(words[1])));
 				System.out.println("equals");
-			} else {
+			} else if (dimensionfilter.contains(s1))
+
+			{
 				String[] words = dimensionfilter.split("=@:");
 				dimensfilterList.add(dimensionFilter.setDimensionName(words[0]).setOperator("PARTIAL")
 						.setExpressions(Arrays.asList(words[1])));
 				System.out.println("at the rate");
+			} else {
+				String[] words = dimensionfilter.split("=@");
+				dimensfilterList.add(dimensionFilter.setDimensionName(words[0]).setOperator("PARTIAL")
+						.setExpressions(Arrays.asList(words[1])));
+				System.out.println("at the rate");
+
 			}
 
 		}
 		// creating DimensionFilterClause object
 		DimensionFilterClause dimensionFilterPathClause = new DimensionFilterClause();
 		// making ArrayList of DimensionFilterClause
-		
+
 		ArrayList<DimensionFilterClause> dmfilterclauselist = new ArrayList<DimensionFilterClause>();
 		// adding dimFilters to it
 		dmfilterclauselist.add(dimensionFilterPathClause.setFilters(dimensfilterList).setOperator("AND"));
 
 		// Creating the ReportRequest object.
 		ReportRequest request = new ReportRequest().setViewId(VIEW_ID).setDateRanges(Arrays.asList(dateRange))
-				.setMetrics(metriclist)
-				.setDimensions(dimensList)
-				.setDimensionFilterClauses(dmfilterclauselist);
+				.setMetrics(metriclist).setDimensions(dimensList).setDimensionFilterClauses(dmfilterclauselist);
 		// making ReportRequest ArrayList
 		ArrayList<ReportRequest> requests = new ArrayList<ReportRequest>();
 		requests.add(request);
