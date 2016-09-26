@@ -37,7 +37,7 @@ public class GoogleAnalyticReporting {
 			GetReportsResponse k2 = response;
 
 			// creating csvfile
-			cf.responsetaker(k2.toString());
+			cf.csvfilecreate(k2.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();

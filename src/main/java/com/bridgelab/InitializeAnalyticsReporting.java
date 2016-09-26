@@ -65,7 +65,7 @@ public class InitializeAnalyticsReporting {
 		return new AnalyticsReporting.Builder(httpTransport, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
-
+	//reading dimension,metric and dimension filter
 	public void getlistofelement(List[] summary) {
 		summaryresponse = summary;
 		metric = (ArrayList) summaryresponse[0];
@@ -152,7 +152,7 @@ public class InitializeAnalyticsReporting {
 				.setMetrics(metriclist)
 				.setDimensions(dimensList)
 				.setDimensionFilterClauses(dmfilterclauselist);
-
+		// making ReportRequest ArrayList
 		ArrayList<ReportRequest> requests = new ArrayList<ReportRequest>();
 		requests.add(request);
 		// Creating the GetReportsRequest object.
