@@ -7,6 +7,34 @@ public class GAreportModel {
 	private ArrayList dimension ;
 	private ArrayList metric ;
 	private ArrayList dimensionfilter1 ;
+	private String GAID;
+	private String GaDiscription;
+	private String date;
+	private String AndroidId;
+	public String getAndroidId() {
+		return AndroidId;
+	}
+	public void setAndroidId(String androidId2){
+		AndroidId = androidId2;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getGAID() {
+		return GAID;
+	}
+	public String getGaDiscription() {
+		return GaDiscription;
+	}
+	public void setGAID(String gAID) {
+		GAID = gAID;
+	}
+	public void setGaDiscription(String gaDiscription) {
+		GaDiscription = gaDiscription;
+	}
 	// setter and getter methods
 	public ArrayList getDimension() {
 		return dimension;
@@ -26,7 +54,7 @@ public class GAreportModel {
 	public void setDimensionfilter1(ArrayList dimensionfilter1) {
 		this.dimensionfilter1 = dimensionfilter1;
 	}
-	
+
 	
 }
 	

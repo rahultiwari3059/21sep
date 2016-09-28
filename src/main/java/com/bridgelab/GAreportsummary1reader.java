@@ -18,7 +18,7 @@ public class GAreportsummary1reader {
 			Object obj = parser
 					.parse(new FileReader("/home/bridgeit/Desktop/springexp/HelloAnalytics/GAreportsummary1.JSON"));
 			// converting object into JSONObject
-			System.out.println("hello idia");
+
 			JSONObject jsonObject = (JSONObject) obj;
 
 			// converting into JSONObject
@@ -54,6 +54,7 @@ public class GAreportsummary1reader {
 				JSONArray dimensionfilterarray = (JSONArray) GAReportInfoobject.get("dimensionfilter");
 				// reading the DimensionFilter JSONArray
 				for (int l = 0; l < dimensionfilterarray.size(); l++) {
+
 					// adding into DimensionFilter ArrayList
 					dimensionfilterarraylist.add((String) dimensionfilterarray.get(l));
 				}

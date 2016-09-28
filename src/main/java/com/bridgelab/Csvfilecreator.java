@@ -5,17 +5,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.util.SystemPropertyUtils;
 
+import com.bridgelab.model.GAreportModel;
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
 
 public class Csvfilecreator {
 	static int i = 0, j = 0, k = 0;
+	static boolean flag = false;
+	String dimension8var = "dimension8";
 	IdandDiscReader id = new IdandDiscReader();
+	GAreportModel ga = new GAreportModel();
 
 	public void csvfilecreate(String response) {
 		int temp1 = 0, temp2 = 0, temp3 = 0;
@@ -82,6 +88,10 @@ public class Csvfilecreator {
 					temp3 = dimensionsarray.size();
 					for (int l = 0; l < dimensionsarray.size(); l++) {
 						// adding into value ArrayList
+						if (dimension8var == (String) dimensionsarray.get(l)) {
+							flag = true;
+
+						}
 						values.add((String) dimensionsarray.get(l));
 					}
 				}
@@ -99,195 +109,321 @@ public class Csvfilecreator {
 		int k = 0;
 		int p = 0;
 		int c = 0;
+		int i = 5;
+		String date = null;
+		String uniqueuser = null;
+		int total1 = 0;
+		Integer total = 0;
+		HashMap<String, Integer> hm = new HashMap<String, Integer>();
+		HashMap<String, Integer> hm1 = new HashMap<String, Integer>();
+		int r = 1;
+		int l = 1;
 		try {
-			System.out.println("hello");
+			ArrayList<String> datearray= new ArrayList<String>();
+			ArrayList<Integer> totalarray= new ArrayList<Integer>();
 			ArrayList<String> s1 = id.gaid();
-
+			ga.setGAID(s1.get(0));
+			ga.setGaDiscription(s1.get(1));
 			// initializing the boolean value
 			boolean b1 = false;
-
+			boolean b = false;
 			// creating the new csv file
 
-			File file1 = new File("/home/bridgeit/Music/CSVfile3.csv");
-			// checking whether file already existing or not
+			File file1 = new File("/home/bridgeit/Music/" + s1.get(1) + ".csv");
 
-			// if metric have 4 element
-			
-			
-			
-			//File file = new File("/home/bridgeit/Music/CSVfile4.csv");
-			/*if (temp2 == 4) {
-				boolean b = false;
+			if (!file1.exists()) {
+				b1 = true;
+			}
 
-				if (!file.exists()) {
-					b = true;
-				}
+			FileWriter fw1 = new FileWriter(file1.getAbsoluteFile(), true);
+			BufferedWriter bw1 = new BufferedWriter(fw1);
 
-				FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-				BufferedWriter bw11 = new BufferedWriter(fw);
-
-				// if file doesn't exists, then create it and appending values
-				if (b) {
-					file.createNewFile();
-					// appending column names
-					bw11.append("gaid");
-					bw11.append("^");
-					bw11.append("gadiscription");
-					bw11.append("^");
-					bw11.append("Androidid");
-					bw11.append("^");
-					bw11.append("Date");
-					bw11.append("^");
-					bw11.append("Sessions");
-					bw11.append("^");
-					bw11.append("Screenviews");
-					bw11.append("^");
-					bw11.append("ExitRate");
-					bw11.append("^");
-					bw11.append("Exit");
-					bw11.append("^");
-
-					bw11.newLine();
-				}
-
+			if (b1) {
+				file1.createNewFile();
+				// appending column names
+				bw1.append("gaid");
+				bw1.append("^");
+				bw1.append("gadiscription");
+				bw1.append("^");
+				bw1.append("Date");
+				bw1.append("^");
+				bw1.append("AndroisId");
+				bw1.append("^");
+				bw1.append("Eventcategory");
+				bw1.append("^");
+				bw1.append("connectiontype");
+				bw1.append("^");
+				bw1.append("Totalevents");
+				bw1.append("^");
+				bw1.append("Sessions");
+				bw1.append("^");
+				bw1.append("Screenviews");
+				bw1.append("^");
+				bw1.append("Exit");
+				bw1.append("^");
+				bw1.append("ExitRate");
+				bw1.append("^");
+				bw1.newLine();
+			}
+			// id dimension have 3 element and to give choice between
+			// eventCategory and connection type
+			if (temp3 == 3) {
 				for (i = 0; i < temp1; i++) {
-					bw11.append(s1.get(0));
-					bw11.append("^");
-					bw11.append(s1.get(1));
-					bw11.append("^");
+					c++;
+					bw1.append(ga.getGAID());
+					bw1.append("^");
+					bw1.append(ga.getGaDiscription());
+					bw1.append("^");
+
+					// System.out.println(ga.getDate());
 					// appending dimension output
 					for (j = 0; j < temp3; j++) {
 
-						System.out.println(list.get(k));
+						// condition for taking date and setting
+						if (k % 3 == 0) {
+							// setting date into model class
+							ga.setDate(list.get(k));
+							// adding into HashMap according to date
+							hm.put(ga.getDate(), r++);
+						}
+						if (k % 3 == 1) {
+							// setting android id in model class
+							ga.setAndroidId(list.get(k));
+							// adding into HashMap according to android id to
+							// fetch number of unique user
+							hm1.put(ga.getAndroidId(), l++);
+							// String android=ga.getAndroidId();
+						}
 
-						bw11.append(list.get(k));
+						// System.out.println(list.get(k));
+						bw1.append(list.get(k));
+						bw1.append("^");
+
+						if (s1.get(2) == "true") {
+							if (k % 3 == 1) {
+
+								bw1.append(" ");
+								bw1.append("^");
+							}
+
+						}
 						k++;
-						bw11.append("^");
+
+					}
+					if (!s1.get(2).equals("true")) {
+
+						bw1.append(" ");
+						bw1.append("^");
 					}
 					// appending metric value
+
 					for (int m = 0; m < temp2; m++) {
 
-						System.out.println(list1.get(p));
-						bw11.append(list1.get(p));
+						// System.out.println(list1.get(p));
+						bw1.append(list1.get(p));
 						p++;
-						bw11.append("^");
+						bw1.append("^");
 					}
-					
-					bw11.newLine();
-
-				}
-				bw11.close();
-			}
-
-			// if metric have 1 values
-			else {
-*/
-				if (!file1.exists()) {
-					b1 = true;
-				}
-
-				FileWriter fw1 = new FileWriter(file1.getAbsoluteFile(), true);
-				BufferedWriter bw1 = new BufferedWriter(fw1);
-
-				if (b1) {
-					file1.createNewFile();
-					// appending column names
-					bw1.append("gaid");
+					bw1.append(" ");
 					bw1.append("^");
-					bw1.append("gadiscription");
+					bw1.append(" ");
 					bw1.append("^");
-					bw1.append("Date");
+					bw1.append(" ");
 					bw1.append("^");
-					bw1.append("AndroisId");
-					bw1.append("^");
-					bw1.append("Eventcategory/connectiontype");
-					bw1.append("^");
-					bw1.append("Totalevents");
-					bw1.append("^");
-					bw1.append("Sessions");
-					bw1.append("^");
-					bw1.append("Screenviews");
-					bw1.append("^");
-					bw1.append("Exit");
-					bw1.append("^");
-					bw1.append("ExitRate");
+					bw1.append(" ");
 					bw1.append("^");
 					bw1.newLine();
+
 				}
-				// id dimension have 3 element
-				if (temp3 == 3) {
+				bw1.close();
+				// System.out.println(hm.size());
+				// taking number of unique android id
+				total1 = hm1.size();
+				uniqueuser = String.valueOf(total1);
+				for (Entry<String, Integer> m1 : hm1.entrySet()) {
+					// taking value
+					total = m1.getValue();
+
+				}
+				for (Entry<String, Integer> m : hm.entrySet()) {
+					date = m.getKey();
+					total = m.getValue();
+					
+					datearray.add(m.getKey());
+					
+					totalarray.add(m.getValue());
+					// printing key value pair
+					System.out.println(m.getKey() + " " + m.getValue());
+				}
+			}
+
+			// if metric having 4 element and 2 dimension
+			else {
+				if (temp2 == 4 && temp3 == 2) {
+					r = 0;
 					for (i = 0; i < temp1; i++) {
-						c++;
-						bw1.append(s1.get(0));
+
+						bw1.append(ga.getGAID());
 						bw1.append("^");
-						bw1.append(s1.get(1));
+						bw1.append(ga.getGaDiscription());
 						bw1.append("^");
 						// appending dimension output
 						for (j = 0; j < temp3; j++) {
+							if (k % 2 == 0) {
+								// setting date into model class
+								ga.setDate(list.get(k));
+								// adding into HashMap according to date
+								hm.put(ga.getDate(), r++);
+							}
+							if (k % 2 == 1) {
+								// setting android id in model class
+								ga.setAndroidId(list.get(k));
+								// adding into HashMap according to android id
+								// to fetch number of unique user
+								hm1.put(ga.getAndroidId(), l++);
 
-							System.out.println(list.get(k));
+							}
+							// System.out.println(list.get(k));
 
 							bw1.append(list.get(k));
-							k++;
 							bw1.append("^");
+							k++;
 						}
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
+						bw1.append(" ");
+						bw1.append("^");
 						// appending metric value
 						for (int m = 0; m < temp2; m++) {
 
-							System.out.println(list1.get(p));
+							// System.out.println(list1.get(p));
 							bw1.append(list1.get(p));
 							p++;
 							bw1.append("^");
 						}
-						bw1.append(" ");
-						bw1.append("^");
-						bw1.append(" ");
-						bw1.append("^");
-						bw1.append(" ");
-						bw1.append("^");
-						bw1.append(" ");
-						bw1.append("^");
 						bw1.newLine();
 
 					}
-				} 
-				// if dimension having 2 element 
+					bw1.close();
+					total1 = hm1.size();
+					uniqueuser = String.valueOf(total1);
+					for (Entry<String, Integer> m1 : hm1.entrySet()) {
+						total = m1.getValue();
+					}
+					for (Entry<String, Integer> m : hm.entrySet()) {
+						date = m.getKey();
+						total = m.getValue();
+						System.out.println(m.getKey() + " " + m.getValue());
+					}
+				}
+
 				else {
 
-					for (i = 0; i < temp1; i++) {
+					if (temp3 == 2) {
+						for (i = 0; i < temp1; i++) {
 
-						bw1.append(s1.get(0));
-						bw1.append("^");
-						bw1.append(s1.get(1));
-						bw1.append("^");
-						// appending dimension output
-						for (j = 0; j < temp3; j++) {
-
-							System.out.println(list.get(k));
-
-							bw1.append(list.get(k));
-							k++;
+							bw1.append(ga.getGAID());
 							bw1.append("^");
-						}
-						bw1.append(" ");
-						bw1.append("^");
-						bw1.append(" ");
-						bw1.append("^");
-						// appending metric value
-						for (int m = 0; m < temp2; m++) {
-
-							System.out.println(list1.get(p));
-							bw1.append(list1.get(p));
-							p++;
+							bw1.append(ga.getGaDiscription());
 							bw1.append("^");
-						}
-						bw1.newLine();
+							// appending dimension output
+							for (j = 0; j < temp3; j++) {
+								if (k % 2 == 0) {
+									ga.setDate(list.get(k));
+									hm.put(ga.getDate(), r++);
+								}
+								if (k % 2 == 1) {
+									ga.setAndroidId(list.get(k));
+									hm1.put(ga.getAndroidId(), l++);
 
+								}
+								// System.out.println(list.get(k));
+
+								bw1.append(list.get(k));
+								k++;
+								bw1.append("^");
+							}
+							bw1.append(" ");
+							bw1.append("^");
+							bw1.append(" ");
+							bw1.append("^");
+							// appending metric value
+							for (int m = 0; m < temp2; m++) {
+
+								// System.out.println(list1.get(p));
+								bw1.append(list1.get(p));
+								p++;
+								bw1.append("^");
+							}
+							bw1.append(" ");
+							bw1.append("^");
+							bw1.append(" ");
+							bw1.append("^");
+							bw1.append(" ");
+							bw1.append("^");
+							bw1.append(" ");
+							bw1.append("^");
+							bw1.newLine();
+						}
+						bw1.close();
+						total1 = hm1.size();
+						uniqueuser = String.valueOf(total1);
+						for (Entry<String, Integer> m1 : hm1.entrySet()) {
+							total = m1.getValue();
+						}
+						for (Entry<String, Integer> m : hm.entrySet()) {
+							System.out.println(m.getKey() + " " + m.getValue());
+						}
 					}
 				}
 
-				bw1.close();
-			//}
+			}
+			File file = new File("/home/bridgeit/Music/summaryreport.csv");
+			if (!file.exists()) {
+				b = true;
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			if (b) {
+				file.createNewFile();
+				bw.append("gaid");
+				bw.append("^");
+				bw.append("gadiscription");
+				/*bw.append("^");
+				// taking value of date and appending 
+				bw.append(date);*/
+				bw.append("^");
+				for (int j1 = 0; j1 < datearray.size(); j1++) {
+					bw.append(datearray.get(j1));
+					bw.append("^");
+				}
+				
+				/*bw.append(datearray.get(2));
+				bw.append("^");*/
+				bw.newLine();
+			}
+			if (true) {
+				bw.append(ga.getGAID());
+				bw.append("^");
+				bw.append(ga.getGaDiscription());
+				bw.append("^");
+				// appending unique value 
+				/*bw.append(uniqueuser);
+				bw.append("^");*/
+				for (int j2 = 0; j2 < datearray.size(); j2++) {
+					bw.append(totalarray.get(j2).toString());
+					bw.append("^");
+				}
+				/*bw.append(totalarray.get(1).toString());
+				bw.append("^");
+				bw.append(totalarray.get(2).toString());
+				bw.append("^");*/
+				bw.newLine();
+
+			}
+			bw.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();

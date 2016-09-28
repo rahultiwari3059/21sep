@@ -85,8 +85,9 @@ public class InitializeAnalyticsReporting {
 
 		// Creating the DateRange object.
 		DateRange dateRange = new DateRange();
-		dateRange.setStartDate("2016-09-02");
-		dateRange.setEndDate("2016-09-03");
+		dateRange.setStartDate("2016-08-26");
+		dateRange.setEndDate("2016-08-28");
+
 
 		ArrayList metric = ga.getMetric();
 		// creating object of metric ArrayList
