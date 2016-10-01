@@ -6,9 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-
-import com.bridgelab.model.GAreportModel;
+import com.bridgelab.model.GaReportModel;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -26,6 +24,7 @@ import com.google.api.services.analyticsreporting.v4.model.Metric;
 import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 
 public class InitializeAnalyticsReporting {
+	ResponseReaderandCsvFileCreator cf = new ResponseReaderandCsvFileCreator();
 	@SuppressWarnings("rawtypes")
 	List[] summaryresponse = null;
 	@SuppressWarnings("rawtypes")
@@ -34,7 +33,7 @@ public class InitializeAnalyticsReporting {
 	ArrayList metric = null;
 	@SuppressWarnings("rawtypes")
 	ArrayList dimensionfilter1 = null;
-	GAreportModel ga = new GAreportModel();
+	GaReportModel ga = new GaReportModel();
 	private static final String APPLICATION_NAME = "Appystore test app";
 	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 	private static final String KEY_FILE_LOCATION = "/home/bridgeit/Desktop/springexp/HelloAnalytics/AppyGAReports-35a6c523765c.p12";
@@ -54,10 +53,6 @@ public class InitializeAnalyticsReporting {
 		String refreshToken = null;
 		credential.setRefreshToken(refreshToken);
 		credential.refreshToken();
-		// printing access token
-		// System.out.println(credential.getAccessToken());
-		// System.out.println(u.callURL("https://www.googleapis.com/analytics/v3/data/ga?ids=ga%3A111820853&start-date=2016-09-02&end-date=2016-09-05&metrics=ga%3AtotalEvents&dimensions=ga%3AeventCategory%2Cga%3Adimension1%2Cga%3Adate&filters=ga%3AeventCategory%3D%3DApp%20Open%3Bga%3Adimension15%3D%3D10&access_token="+credential.getAccessToken()));
-
 		if (!credential.refreshToken()) {
 			throw new RuntimeException("Failed OAuth to refresh the token");
 		}
@@ -67,28 +62,38 @@ public class InitializeAnalyticsReporting {
 	}
 
 	// reading dimension,metric and dimension filter
-	public void getlistofelement(List[] summary) {
+	public void dimensionmetricfilterList(List[] summary) {
 		summaryresponse = summary;
+		// retrieving the metric ArrayList
 		metric = (ArrayList) summaryresponse[0];
-		// setting the metric ArrayList
-		ga.setMetric(metric);
+		// retrieving the dimension ArrayList
 		dimension = (ArrayList) summaryresponse[1];
-		// setting the dimension ArrayList
-		ga.setDimension(dimension);
-		dimensionfilter1 = (ArrayList) summaryresponse[2];
-		//// setting the dimensionfilter ArrayList
-		ga.setDimensionfilter1(dimensionfilter1);
-
+		
+		if(summaryresponse.length==3)
+		{
+			// retrieving the dimensionfilter ArrayList
+				dimensionfilter1 = (ArrayList) summaryresponse[2];
+				ga.setMetric(metric);
+				ga.setDimension(dimension);
+				ga.setDimensionfilter1(dimensionfilter1);
+		}
+		else
+		if(summaryresponse.length==2)
+		{
+			ga.setMetric(metric);
+			ga.setDimension(dimension);
+		}
 	}
 
+	// method which give response after setting dimension metric and filter 
 	public GetReportsResponse getReport(AnalyticsReporting service) throws IOException {
 
 		// Creating the DateRange object.
 		DateRange dateRange = new DateRange();
 		dateRange.setStartDate("2016-08-26");
-		dateRange.setEndDate("2016-08-28");
+		dateRange.setEndDate("2016-08-26");
 
-
+		// getting metricarry from model class 
 		ArrayList metric = ga.getMetric();
 		// creating object of metric ArrayList
 		ArrayList<Metric> metriclist = new ArrayList<Metric>();
@@ -100,10 +105,11 @@ public class InitializeAnalyticsReporting {
 			metriclist.add(metric3.setExpression((String) metric.get(j)));
 		}
 
-		// Creating the Dimensions ArrayList.
-
+		
+		// getting dimensionarray from model class 
 		dimension = ga.getDimension();
 		Dimension dimens;
+		// Creating the Dimensions ArrayList.
 		ArrayList<Dimension> dimensList = new ArrayList<Dimension>();
 		dimensList.clear();
 		for (int i = 0; i < dimension.size(); i++) {
@@ -113,10 +119,13 @@ public class InitializeAnalyticsReporting {
 			dimensList.add(dimens.setName((String) dimension.get(i)));
 		}
 
+		
+		// getting dimenstionfilter from model class
 		dimensionfilter1 = ga.getDimensionfilter1();
 		// creating object of DimensionFilter arrayList
 		ArrayList<DimensionFilter> dimensfilterList = new ArrayList<DimensionFilter>();
 		dimensfilterList.clear();
+		if(dimensionfilter1.size()>=1){
 		for (int k = 0; k < dimensionfilter1.size(); k++) {
 			// created DimensionFilter object
 			DimensionFilter dimensionFilter = new DimensionFilter();
@@ -149,17 +158,29 @@ public class InitializeAnalyticsReporting {
 			}
 
 		}
+		}
+		
+		
 		// creating DimensionFilterClause object
 		DimensionFilterClause dimensionFilterPathClause = new DimensionFilterClause();
 		// making ArrayList of DimensionFilterClause
-
 		ArrayList<DimensionFilterClause> dmfilterclauselist = new ArrayList<DimensionFilterClause>();
 		// adding dimFilters to it
 		dmfilterclauselist.add(dimensionFilterPathClause.setFilters(dimensfilterList).setOperator("AND"));
+		
 
 		// Creating the ReportRequest object.
-		ReportRequest request = new ReportRequest().setViewId(VIEW_ID).setDateRanges(Arrays.asList(dateRange))
-				.setMetrics(metriclist).setDimensions(dimensList).setDimensionFilterClauses(dmfilterclauselist);
+		ReportRequest request = new ReportRequest()
+				.setViewId(VIEW_ID)
+				.setDateRanges(Arrays.asList(dateRange))
+				.setMetrics(metriclist)
+				.setDimensions(dimensList);
+		// if dimensionfilter is available then only set it
+		if(dimensionfilter1.size()>=1)
+		{
+				request.setDimensionFilterClauses(dmfilterclauselist);
+		}
+		
 		// making ReportRequest ArrayList
 		ArrayList<ReportRequest> requests = new ArrayList<ReportRequest>();
 		requests.add(request);
@@ -167,7 +188,6 @@ public class InitializeAnalyticsReporting {
 		GetReportsRequest getReport = new GetReportsRequest().setReportRequests(requests);
 		// Calling the batchGet method.
 		GetReportsResponse response = service.reports().batchGet(getReport).execute();
-
 		// Returning the response.
 		return response;
 	}

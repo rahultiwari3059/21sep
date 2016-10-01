@@ -1,0 +1,20 @@
+{
+  "GAReportInfo": [
+  {
+      "GAID": "71 ",
+      "GAdiscription": "COD reconcilliation Reopen",
+      "metric": [
+        "ga:totalEvents"
+      ],
+      "dimension": [
+        "ga:date",
+        "ga:dimension1"
+      ],
+      "dimensionfilter": [
+        "ga:eventCategory==Push Message",
+        "ga:eventAction==App Reopen",
+        "ga:eventLabel=@cod_reconcillation"
+      ]
+    }
+    ]
+}
